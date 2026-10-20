@@ -1,0 +1,11 @@
+# DemandIQ FastAPI backend (Python 3.11+)
+fastapi>=0.115,<1.0
+uvicorn[standard]>=0.30
+SQLAlchemy>=2.0.30,<2.1
+pyodbc>=5.1            # Microsoft SQL Server through "ODBC Driver 18 for SQL Server"
+pydantic>=2.7,<3
+pydantic-settings>=2.3
+bcrypt>=4.1
+python-multipart>=0.0.9  # multipart uploads (POST /api/datasets)
+openpyxl>=3.1          # reads uploaded .xlsx files, writes XLSX reports
+reportlab>=4.2         # PDF reports

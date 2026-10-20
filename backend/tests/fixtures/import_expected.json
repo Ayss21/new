@@ -1,0 +1,685 @@
+{
+ "many_columns_several_stores": {
+  "total": 5,
+  "valid": 3,
+  "missing": 0,
+  "duplicates": 0,
+  "invalidDates": 0,
+  "invalidNumeric": 0,
+  "combined": 2,
+  "errors": [],
+  "records": [
+   {
+    "date": "2024-01-01",
+    "sku": "P0001",
+    "category": "Groceries",
+    "location": "S001",
+    "region": "North",
+    "channel": "Unassigned",
+    "units": 200,
+    "unitPrice": 32.22,
+    "discountRate": 0.166,
+    "netRevenue": 5374.3
+   },
+   {
+    "date": "2024-01-01",
+    "sku": "P0002",
+    "category": "Toys",
+    "location": "S001",
+    "region": "North",
+    "channel": "Unassigned",
+    "units": 150,
+    "unitPrice": 63.01,
+    "discountRate": 0,
+    "netRevenue": 9451.5
+   },
+   {
+    "date": "2024-01-02",
+    "sku": "P0001",
+    "category": "Groceries",
+    "location": "S001",
+    "region": "North",
+    "channel": "Unassigned",
+    "units": 60,
+    "unitPrice": 32.92,
+    "discountRate": 0,
+    "netRevenue": 1975.2
+   }
+  ],
+  "newProducts": [
+   {
+    "sku": "P0001",
+    "name": "P0001",
+    "category": "Groceries",
+    "region": "North",
+    "location": "S001",
+    "channel": "Unassigned",
+    "unitPrice": 31.75,
+    "stock": 194
+   },
+   {
+    "sku": "P0002",
+    "name": "P0002",
+    "category": "Toys",
+    "region": "North",
+    "location": "S001",
+    "channel": "Unassigned",
+    "unitPrice": 63.01,
+    "stock": 204
+   }
+  ],
+  "columns": {
+   "date": "Date",
+   "units": "Units Sold",
+   "discount": "Discount",
+   "price": "Price",
+   "stock": "Inventory Level",
+   "category": "Category",
+   "region": "Region",
+   "location": "Store ID",
+   "product": "Product ID"
+  }
+ },
+ "title_row_known_products_day_first": {
+  "total": 3,
+  "valid": 3,
+  "missing": 0,
+  "duplicates": 0,
+  "invalidDates": 0,
+  "invalidNumeric": 0,
+  "combined": 0,
+  "errors": [],
+  "records": [
+   {
+    "date": "2025-06-13",
+    "sku": "PC-3308",
+    "category": "Specialties",
+    "location": "West Hub",
+    "region": "West",
+    "channel": "Distributor",
+    "units": 2,
+    "unitPrice": 382,
+    "discountRate": 0,
+    "netRevenue": 764
+   },
+   {
+    "date": "2025-06-26",
+    "sku": "PP-4012",
+    "category": "Polymers",
+    "location": "Central DC",
+    "region": "Central",
+    "channel": "Direct",
+    "units": 10,
+    "unitPrice": 248,
+    "discountRate": 0,
+    "netRevenue": 2480
+   },
+   {
+    "date": "2025-06-27",
+    "sku": "PE-7820",
+    "category": "Polyethylene",
+    "location": "East Hub",
+    "region": "East",
+    "channel": "Distributor",
+    "units": 4,
+    "unitPrice": 224,
+    "discountRate": 0,
+    "netRevenue": 896
+   }
+  ],
+  "newProducts": [],
+  "columns": {
+   "date": "Sale Date",
+   "units": "Qty",
+   "revenue": "Amount",
+   "name": "Description",
+   "product": "Item Code"
+  }
+ },
+ "month_first": {
+  "total": 2,
+  "valid": 2,
+  "missing": 0,
+  "duplicates": 0,
+  "invalidDates": 0,
+  "invalidNumeric": 0,
+  "combined": 0,
+  "errors": [],
+  "records": [
+   {
+    "date": "2025-06-02",
+    "sku": "PP-4012",
+    "category": "Polymers",
+    "location": "Central DC",
+    "region": "Central",
+    "channel": "Direct",
+    "units": 2,
+    "unitPrice": 248,
+    "discountRate": 0,
+    "netRevenue": 496
+   },
+   {
+    "date": "2025-06-26",
+    "sku": "PP-4012",
+    "category": "Polymers",
+    "location": "Central DC",
+    "region": "Central",
+    "channel": "Direct",
+    "units": 1,
+    "unitPrice": 248,
+    "discountRate": 0,
+    "netRevenue": 248
+   }
+  ],
+  "newProducts": [],
+  "columns": {
+   "date": "Date",
+   "units": "Units",
+   "product": "SKU"
+  }
+ },
+ "price_from_amount_names_only": {
+  "total": 4,
+  "valid": 3,
+  "missing": 0,
+  "duplicates": 0,
+  "invalidDates": 0,
+  "invalidNumeric": 0,
+  "combined": 1,
+  "errors": [],
+  "records": [
+   {
+    "date": "2016-06-12",
+    "sku": "SELF-ADHESIVE-LABELS",
+    "category": "Uncategorized",
+    "location": "Unassigned",
+    "region": "Unassigned",
+    "channel": "Unassigned",
+    "units": 2,
+    "unitPrice": 7.31,
+    "discountRate": 0,
+    "netRevenue": 14.62
+   },
+   {
+    "date": "2016-11-08",
+    "sku": "BUSH-SOMERSET-BOOKCASE",
+    "category": "Uncategorized",
+    "location": "Unassigned",
+    "region": "Unassigned",
+    "channel": "Unassigned",
+    "units": 3,
+    "unitPrice": 130.98,
+    "discountRate": 0,
+    "netRevenue": 392.94
+   },
+   {
+    "date": "2016-11-22",
+    "sku": "SELF-ADHESIVE-LABELS",
+    "category": "Uncategorized",
+    "location": "Unassigned",
+    "region": "Unassigned",
+    "channel": "Unassigned",
+    "units": 1,
+    "unitPrice": 7.31,
+    "discountRate": 0,
+    "netRevenue": 7.31
+   }
+  ],
+  "newProducts": [
+   {
+    "sku": "BUSH-SOMERSET-BOOKCASE",
+    "name": "Bush Somerset Bookcase",
+    "category": "Uncategorized",
+    "region": "Unassigned",
+    "location": "Unassigned",
+    "channel": "Unassigned",
+    "unitPrice": 130.98,
+    "stock": null
+   },
+   {
+    "sku": "SELF-ADHESIVE-LABELS",
+    "name": "Self-Adhesive Labels",
+    "category": "Uncategorized",
+    "region": "Unassigned",
+    "location": "Unassigned",
+    "channel": "Unassigned",
+    "unitPrice": 7.31,
+    "stock": null
+   }
+  ],
+  "columns": {
+   "date": "Order Date",
+   "units": "Quantity",
+   "discount": "Discount",
+   "revenue": "Sales",
+   "product": "Product Name"
+  }
+ },
+ "no_header": {
+  "total": 3,
+  "valid": 3,
+  "missing": 0,
+  "duplicates": 0,
+  "invalidDates": 0,
+  "invalidNumeric": 0,
+  "combined": 0,
+  "errors": [],
+  "records": [
+   {
+    "date": "2025-06-26",
+    "sku": "PP-4012",
+    "category": "Polymers",
+    "location": "Central DC",
+    "region": "Central",
+    "channel": "Direct",
+    "units": 40,
+    "unitPrice": 248,
+    "discountRate": 0,
+    "netRevenue": 9920
+   },
+   {
+    "date": "2025-06-27",
+    "sku": "PE-7820",
+    "category": "Polyethylene",
+    "location": "East Hub",
+    "region": "East",
+    "channel": "Distributor",
+    "units": 38,
+    "unitPrice": 224,
+    "discountRate": 0,
+    "netRevenue": 8512
+   },
+   {
+    "date": "2025-06-27",
+    "sku": "PP-4012",
+    "category": "Polymers",
+    "location": "Central DC",
+    "region": "Central",
+    "channel": "Direct",
+    "units": 41,
+    "unitPrice": 248,
+    "discountRate": 0,
+    "netRevenue": 10168
+   }
+  ],
+  "newProducts": [],
+  "columns": {
+   "date": "Column 1",
+   "product": "Column 2",
+   "units": "Column 3"
+  }
+ },
+ "duplicates_and_bad_rows": {
+  "total": 6,
+  "valid": 1,
+  "missing": 1,
+  "duplicates": 1,
+  "invalidDates": 1,
+  "invalidNumeric": 2,
+  "combined": 0,
+  "errors": [],
+  "records": [
+   {
+    "date": "2025-06-26",
+    "sku": "PP-4012",
+    "category": "Polymers",
+    "location": "Central DC",
+    "region": "Central",
+    "channel": "Direct",
+    "units": 4,
+    "unitPrice": 248,
+    "discountRate": 0,
+    "netRevenue": 992
+   }
+  ],
+  "newProducts": [],
+  "columns": {
+   "date": "Date",
+   "units": "Qty",
+   "price": "Price",
+   "product": "SKU"
+  }
+ },
+ "nothing_usable": {
+  "total": 3,
+  "valid": 0,
+  "missing": 0,
+  "duplicates": 0,
+  "invalidDates": 1,
+  "invalidNumeric": 2,
+  "combined": 0,
+  "errors": [
+   "None of the 3 rows could be used: 2 have a number that can't be used (such as \"lots\"); 1 has a date that can't be read (such as \"31/31/2025\")."
+  ],
+  "records": [],
+  "newProducts": [],
+  "columns": {
+   "date": "Date",
+   "units": "Qty",
+   "product": "SKU"
+  }
+ },
+ "missing_column": {
+  "total": 1,
+  "valid": 0,
+  "combined": 0,
+  "missing": 0,
+  "duplicates": 0,
+  "invalidDates": 0,
+  "invalidNumeric": 0,
+  "errors": [
+   "Couldn't find a product column (SKU, Product ID, Item or Product Name …). Columns in the file: Date, Units."
+  ],
+  "records": [],
+  "newProducts": [],
+  "columns": {
+   "date": "Date",
+   "units": "Units"
+  }
+ },
+ "dates_across_the_top": {
+  "total": 4,
+  "valid": 4,
+  "missing": 0,
+  "duplicates": 0,
+  "invalidDates": 0,
+  "invalidNumeric": 0,
+  "combined": 0,
+  "errors": [],
+  "records": [
+   {
+    "date": "2025-06-01",
+    "sku": "PP-4012",
+    "category": "Polymers",
+    "location": "Central DC",
+    "region": "Central",
+    "channel": "Direct",
+    "units": 10,
+    "unitPrice": 248,
+    "discountRate": 0,
+    "netRevenue": 2480
+   },
+   {
+    "date": "2025-06-01",
+    "sku": "WIDGET-A",
+    "category": "Gadgets",
+    "location": "Unassigned",
+    "region": "Unassigned",
+    "channel": "Unassigned",
+    "units": 3,
+    "unitPrice": 0,
+    "discountRate": 0,
+    "netRevenue": 0
+   },
+   {
+    "date": "2025-06-02",
+    "sku": "PP-4012",
+    "category": "Polymers",
+    "location": "Central DC",
+    "region": "Central",
+    "channel": "Direct",
+    "units": 12,
+    "unitPrice": 248,
+    "discountRate": 0,
+    "netRevenue": 2976
+   },
+   {
+    "date": "2025-06-03",
+    "sku": "WIDGET-A",
+    "category": "Gadgets",
+    "location": "Unassigned",
+    "region": "Unassigned",
+    "channel": "Unassigned",
+    "units": 4,
+    "unitPrice": 0,
+    "discountRate": 0,
+    "netRevenue": 0
+   }
+  ],
+  "newProducts": [
+   {
+    "sku": "WIDGET-A",
+    "name": "Widget A",
+    "category": "Gadgets",
+    "region": "Unassigned",
+    "location": "Unassigned",
+    "channel": "Unassigned",
+    "unitPrice": 0,
+    "stock": null
+   }
+  ],
+  "columns": {
+   "date": "01/06/2025 … 03/06/2025",
+   "units": "01/06/2025 … 03/06/2025",
+   "product": "Product",
+   "category": "Category"
+  }
+ },
+ "sales_as_units": {
+  "total": 3,
+  "valid": 2,
+  "missing": 0,
+  "duplicates": 0,
+  "invalidDates": 0,
+  "invalidNumeric": 0,
+  "combined": 1,
+  "errors": [],
+  "records": [
+   {
+    "date": "2025-06-01",
+    "sku": "PP-4012",
+    "category": "Polymers",
+    "location": "Central DC",
+    "region": "Central",
+    "channel": "Direct",
+    "units": 24,
+    "unitPrice": 248,
+    "discountRate": 0,
+    "netRevenue": 5952
+   },
+   {
+    "date": "2025-06-02",
+    "sku": "PE-7820",
+    "category": "Polyethylene",
+    "location": "East Hub",
+    "region": "East",
+    "channel": "Distributor",
+    "units": 9,
+    "unitPrice": 224,
+    "discountRate": 0,
+    "netRevenue": 2016
+   }
+  ],
+  "newProducts": [],
+  "columns": {
+   "date": "date",
+   "product": "item",
+   "location": "store",
+   "units": "sales"
+  }
+ },
+ "categories_as_products": {
+  "total": 3,
+  "valid": 3,
+  "missing": 0,
+  "duplicates": 0,
+  "invalidDates": 0,
+  "invalidNumeric": 0,
+  "combined": 0,
+  "errors": [],
+  "records": [
+   {
+    "date": "2025-01-05",
+    "sku": "ELECTRONIC-ACCESSORIES",
+    "category": "Electronic accessories",
+    "location": "Unassigned",
+    "region": "Unassigned",
+    "channel": "Unassigned",
+    "units": 5,
+    "unitPrice": 15.28,
+    "discountRate": 0,
+    "netRevenue": 76.4
+   },
+   {
+    "date": "2025-01-05",
+    "sku": "HEALTH-AND-BEAUTY",
+    "category": "Health and beauty",
+    "location": "Unassigned",
+    "region": "Unassigned",
+    "channel": "Unassigned",
+    "units": 7,
+    "unitPrice": 74.69,
+    "discountRate": 0,
+    "netRevenue": 522.83
+   },
+   {
+    "date": "2025-01-06",
+    "sku": "HEALTH-AND-BEAUTY",
+    "category": "Health and beauty",
+    "location": "Unassigned",
+    "region": "Unassigned",
+    "channel": "Unassigned",
+    "units": 3,
+    "unitPrice": 46.33,
+    "discountRate": 0,
+    "netRevenue": 138.99
+   }
+  ],
+  "newProducts": [
+   {
+    "sku": "HEALTH-AND-BEAUTY",
+    "name": "Health and beauty",
+    "category": "Health and beauty",
+    "region": "Unassigned",
+    "location": "Unassigned",
+    "channel": "Unassigned",
+    "unitPrice": 60.51,
+    "stock": null
+   },
+   {
+    "sku": "ELECTRONIC-ACCESSORIES",
+    "name": "Electronic accessories",
+    "category": "Electronic accessories",
+    "region": "Unassigned",
+    "location": "Unassigned",
+    "channel": "Unassigned",
+    "unitPrice": 15.28,
+    "stock": null
+   }
+  ],
+  "columns": {
+   "date": "Date",
+   "units": "Quantity",
+   "price": "Unit price",
+   "category": "Product line",
+   "product": "Product line"
+  }
+ },
+ "semicolons_decimal_commas": {
+  "total": 2,
+  "valid": 2,
+  "missing": 0,
+  "duplicates": 0,
+  "invalidDates": 0,
+  "invalidNumeric": 0,
+  "combined": 0,
+  "errors": [],
+  "records": [
+   {
+    "date": "2025-06-26",
+    "sku": "PP-4012",
+    "category": "Polymers",
+    "location": "Central DC",
+    "region": "Central",
+    "channel": "Direct",
+    "units": 10,
+    "unitPrice": 248,
+    "discountRate": 0,
+    "netRevenue": 2480
+   },
+   {
+    "date": "2025-06-27",
+    "sku": "PE-7820",
+    "category": "Polyethylene",
+    "location": "East Hub",
+    "region": "East",
+    "channel": "Distributor",
+    "units": 3,
+    "unitPrice": 1224.5,
+    "discountRate": 0,
+    "netRevenue": 3673.5
+   }
+  ],
+  "newProducts": [],
+  "columns": {
+   "date": "Datum",
+   "units": "Menge",
+   "price": "Preis",
+   "product": "Artikelnummer"
+  }
+ },
+ "discount_amount_and_totals": {
+  "total": 2,
+  "valid": 0,
+  "missing": 0,
+  "duplicates": 0,
+  "invalidDates": 2,
+  "invalidNumeric": 0,
+  "combined": 0,
+  "errors": [
+   "None of the 2 rows could be used: 2 have a date that can't be read (such as \"Jun 26\")."
+  ],
+  "records": [],
+  "newProducts": [],
+  "columns": {
+   "date": "Invoice Date",
+   "units": "Qty",
+   "discountAmount": "Discount Amount",
+   "price": "Unit Price",
+   "revenue": "Line Total",
+   "product": "SKU"
+  }
+ },
+ "tabs_and_excel_serials": {
+  "total": 2,
+  "valid": 2,
+  "missing": 0,
+  "duplicates": 0,
+  "invalidDates": 0,
+  "invalidNumeric": 0,
+  "combined": 0,
+  "errors": [],
+  "records": [
+   {
+    "date": "2025-06-26",
+    "sku": "PP-4012",
+    "category": "Polymers",
+    "location": "Central DC",
+    "region": "Central",
+    "channel": "Direct",
+    "units": 4,
+    "unitPrice": 248,
+    "discountRate": 0,
+    "netRevenue": 992
+   },
+   {
+    "date": "2025-06-27",
+    "sku": "PP-4012",
+    "category": "Polymers",
+    "location": "Central DC",
+    "region": "Central",
+    "channel": "Direct",
+    "units": 6,
+    "unitPrice": 248,
+    "discountRate": 0,
+    "netRevenue": 1488
+   }
+  ],
+  "newProducts": [],
+  "columns": {
+   "date": "Date",
+   "units": "Units",
+   "product": "SKU"
+  }
+ }
+}

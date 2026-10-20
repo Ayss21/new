@@ -1,0 +1,268 @@
+erDiagram
+    modules ||--o{ error_log : "module"
+    regions ||--o{ locations : "region_id"
+    screens ||--o{ permission_actions : "screen_id"
+    roles ||--o{ role_report_types : "role_id"
+    report_types ||--o{ role_report_types : "report_type"
+    roles ||--o{ role_screens : "role_id"
+    screens ||--o{ role_screens : "screen_id"
+    roles ||--o{ users : "role_id"
+    users ||--o{ datasets : "uploaded_by"
+    users |o--o{ datasets : "cleaned_by"
+    roles ||--o{ reports : "role_id"
+    users ||--o{ reports : "user_id"
+    report_types ||--o{ reports : "report_type"
+    permission_actions ||--o{ role_permissions : "action"
+    roles ||--o{ role_permissions : "role_id"
+    users ||--o{ sessions : "user_id"
+    roles ||--o{ sessions : "role_id"
+    sessions |o--o{ activity_log : "session_id"
+    roles |o--o{ activity_log : "role_id"
+    users |o--o{ activity_log : "user_id"
+    modules ||--o{ activity_log : "module"
+    categories ||--o{ products : "category_id"
+    datasets |o--o{ products : "added_from"
+    products ||--o{ dataset_pending_records : "sku"
+    locations ||--o{ dataset_pending_records : "location_id"
+    datasets ||--o{ dataset_pending_records : "dataset_id"
+    users |o--o{ forecast_runs : "generated_by"
+    products ||--o{ forecast_runs : "sku"
+    products ||--o| inventory : "sku"
+    locations ||--o{ inventory : "location_id"
+    products ||--o{ inventory_snapshot_items : "sku"
+    inventory_snapshots ||--o{ inventory_snapshot_items : "month"
+    products ||--o{ reorders : "sku"
+    users ||--o{ reorders : "ordered_by"
+    locations ||--o{ sales_records : "location_id"
+    datasets |o--o{ sales_records : "dataset_id"
+    products ||--o{ sales_records : "sku"
+    forecast_runs ||--o{ forecast_points : "forecast_id"
+    forecast_runs ||--o{ forecast_sources : "forecast_id"
+    datasets |o--o{ forecast_sources : "dataset_id"
+    categories {
+        VARCHAR category_id PK
+        NVARCHAR name
+        NVARCHAR description
+        VARCHAR status
+    }
+    inventory_snapshots {
+        VARCHAR month PK
+        DATE as_of
+    }
+    modules {
+        NVARCHAR name PK
+        SMALLINT position
+    }
+    regions {
+        INT_IDENTITY region_id PK
+        NVARCHAR name
+    }
+    report_types {
+        NVARCHAR name PK
+        NVARCHAR description
+        VARCHAR icon
+        SMALLINT position
+    }
+    roles {
+        SMALLINT role_id PK
+        NVARCHAR name
+    }
+    screens {
+        VARCHAR screen_id PK
+        NVARCHAR name
+        VARCHAR path
+        SMALLINT position
+    }
+    error_log {
+        VARCHAR error_id PK
+        DATETIME2 created_at
+        NVARCHAR module FK
+        NVARCHAR error_type
+        VARCHAR severity
+        NVARCHAR message
+        VARCHAR status
+        NVARCHAR notes
+    }
+    locations {
+        INT_IDENTITY location_id PK
+        NVARCHAR name
+        INT region_id FK
+    }
+    permission_actions {
+        NVARCHAR action PK
+        VARCHAR screen_id FK
+        BIT allows_view
+        BIT allows_review
+        SMALLINT position
+    }
+    role_report_types {
+        SMALLINT role_id PK,FK
+        NVARCHAR report_type PK,FK
+    }
+    role_screens {
+        SMALLINT role_id PK,FK
+        VARCHAR screen_id PK,FK
+    }
+    users {
+        VARCHAR user_id PK
+        NVARCHAR name
+        NVARCHAR email
+        VARCHAR password_hash
+        SMALLINT role_id FK
+        NVARCHAR department
+        VARCHAR status
+        DATETIME2 created_at
+    }
+    datasets {
+        VARCHAR dataset_id PK
+        NVARCHAR file_name
+        DATETIME2 uploaded_at
+        VARCHAR uploaded_by FK
+        INT total_rows
+        INT valid_rows
+        INT combined_rows
+        INT missing_rows
+        INT duplicate_rows
+        INT invalid_date_rows
+        INT invalid_numeric_rows
+        NVARCHAR error
+        DATE coverage_first_date
+        DATE coverage_last_date
+        INT coverage_products
+        VARCHAR cleaning
+        DATETIME2 cleaned_at
+        VARCHAR cleaned_by FK
+        INT outliers_capped
+        INT records_replaced
+        INT records_skipped
+        INT records_added
+    }
+    reports {
+        VARCHAR report_id PK
+        NVARCHAR report_type FK
+        VARCHAR format
+        DATETIME2 generated_at
+        DATETIME2 completed_at
+        VARCHAR user_id FK
+        SMALLINT role_id FK
+        VARCHAR status
+        NVARCHAR filters
+        NVARCHAR error
+    }
+    role_permissions {
+        NVARCHAR action PK,FK
+        SMALLINT role_id PK,FK
+        VARCHAR level
+    }
+    sessions {
+        VARCHAR session_id PK
+        VARCHAR user_id FK
+        SMALLINT role_id FK
+        DATETIME2 login_at
+        DATETIME2 logout_at
+        DATETIME2 expires_at
+        BIT remember
+        VARCHAR token_hash
+    }
+    activity_log {
+        VARCHAR event_id PK
+        DATETIME2 created_at
+        VARCHAR session_id FK
+        VARCHAR user_id FK
+        SMALLINT role_id FK
+        NVARCHAR attempted_login
+        NVARCHAR action
+        NVARCHAR module FK
+        NVARCHAR details
+        VARCHAR status
+    }
+    products {
+        VARCHAR sku PK
+        NVARCHAR name
+        VARCHAR category_id FK
+        NVARCHAR channel
+        DECIMAL unit_price
+        DECIMAL unit_cost
+        INT position
+        VARCHAR added_from FK
+    }
+    dataset_pending_records {
+        VARCHAR record_id PK
+        VARCHAR dataset_id FK
+        DATE sale_date
+        VARCHAR sku FK
+        INT location_id FK
+        INT units
+        DECIMAL unit_price
+        DECIMAL discount_rate
+        DECIMAL net_revenue
+    }
+    forecast_runs {
+        VARCHAR forecast_id PK
+        VARCHAR sku FK
+        VARCHAR model
+        INT horizon
+        DATE start_date
+        DATE end_date
+        INT window_size
+        DECIMAL slope
+        SMALLINT arima_p
+        SMALLINT arima_d
+        SMALLINT arima_q
+        FLOAT mae
+        FLOAT rmse
+        FLOAT mape
+        INT holdout_days
+        DATETIME2 generated_at
+        VARCHAR generated_by FK
+    }
+    inventory {
+        VARCHAR sku PK,FK
+        INT location_id FK
+        INT stock
+        INT reorder_level
+        INT safety_stock
+        INT demand_30d
+        DATETIME2 updated_at
+    }
+    inventory_snapshot_items {
+        VARCHAR month PK,FK
+        VARCHAR sku PK,FK
+        INT stock
+        VARCHAR status
+    }
+    reorders {
+        VARCHAR reorder_id PK
+        VARCHAR sku FK
+        INT quantity
+        NVARCHAR supplier
+        VARCHAR status
+        DATETIME2 ordered_at
+        DATETIME2 delivered_at
+        VARCHAR ordered_by FK
+    }
+    sales_records {
+        VARCHAR sale_id PK
+        DATE sale_date
+        VARCHAR sku FK
+        INT location_id FK
+        INT units
+        DECIMAL unit_price
+        DECIMAL discount_rate
+        DECIMAL net_revenue
+        VARCHAR dataset_id FK
+    }
+    forecast_points {
+        VARCHAR forecast_id PK,FK
+        INT period PK
+        INT predicted
+    }
+    forecast_sources {
+        VARCHAR forecast_id PK,FK
+        VARCHAR kind PK
+        SMALLINT position PK
+        VARCHAR dataset_id FK
+        INT records
+        DATE first_date
+        DATE last_date
+    }

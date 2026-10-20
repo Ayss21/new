@@ -1,0 +1,16 @@
+{
+ "many_columns_several_stores": "Date,Store ID,Product ID,Category,Region,Inventory Level,Units Sold,Units Ordered,Demand Forecast,Price,Discount,Weather Condition,Competitor Pricing\n2024-01-01,S001,P0001,Groceries,North,231,127,55,135.47,33.50,20,Rainy,29.69\n2024-01-01,S002,P0001,Groceries,South,150,73,66,80.1,30.00,10,Sunny,31.00\n2024-01-01,S001,P0002,Toys,North,204,150,66,144.04,63.01,0,Sunny,66.16\n2024-01-02,S001,P0001,Groceries,North,104,50,20,52.2,33.50,0,Cloudy,30.10\n2024-01-02,S002,P0001,Groceries,North,90,10,20,12.0,30.00,0,Cloudy,30.10",
+ "title_row_known_products_day_first": "Weekly sales export\n\nSale Date,Item Code,Description,Qty,Amount,Notes\n26-06-2025,pp4012,Polypropylene 4012,10,\"2,480.00\",ok\n27-06-2025,,HDPE Resin 7820,4,896,\n13-06-2025,PC 3308,,2,,",
+ "month_first": "Date,SKU,Units\n06/26/2025,PP-4012,1\n06/02/2025,PP-4012,2",
+ "price_from_amount_names_only": "Order ID,Order Date,Product Name,Sales,Quantity,Discount\nCA-1,11/8/2016,Bush Somerset Bookcase,261.96,2,0\nCA-2,11/8/2016,Bush Somerset Bookcase,130.98,1,0\nCA-3,6/12/2016,Self-Adhesive Labels,14.62,2,0\nCA-4,11/22/2016,Self-Adhesive Labels,7.31,1,0",
+ "no_header": "2025-06-26,PP-4012,40,248\n2025-06-27,PE-7820,38,224\n2025-06-27,PP-4012,41,248",
+ "duplicates_and_bad_rows": "Date,SKU,Qty,Price\n2025-06-26,PP-4012,4,248\n2025-06-26,PP-4012,4,248\n2025-06-27,PP-4012,,248\n31/31/2025,PP-4012,3,248\n2025-06-28,PP-4012,2.5,248\n2025-06-29,PP-4012,5,abc",
+ "nothing_usable": "Date,SKU,Qty\n2025-06-26,PP-4012,lots\n31/31/2025,PP-4012,3\n2025-06-27,PP-4012,many",
+ "missing_column": "Date,Units\n2025-06-26,4",
+ "dates_across_the_top": "Product,Category,01/06/2025,02/06/2025,03/06/2025,Total\nPP-4012,Polymers,10,12,,22\nWidget A,Gadgets,3,,4,7\nTotal,,13,12,4,29",
+ "sales_as_units": "date,store,item,sales\n2025-06-01,1,PP-4012,13\n2025-06-01,2,PP-4012,11\n2025-06-02,1,PE-7820,9",
+ "categories_as_products": "Date,Product line,Quantity,Unit price\n2025-01-05,Health and beauty,7,74.69\n2025-01-05,Electronic accessories,5,15.28\n2025-01-06,Health and beauty,3,46.33",
+ "semicolons_decimal_commas": "Datum;Artikelnummer;Menge;Preis;Rabatt\n26.06.2025;PP-4012;10;248,00;5%\n27.06.2025;PE-7820;3;1.224,50;0",
+ "discount_amount_and_totals": "Invoice Date,SKU,Qty,Unit Price,Discount Amount,Line Total\nJun 26, 2025,PP-4012,10,248,124,2356\nThu, 26 Jun 2025,PE-7820,2,224,0,448\nGrand Total,,12,,,2804",
+ "tabs_and_excel_serials": "Date\tSKU\tUnits\n45834\tPP-4012\t4\n45835\tPP-4012\t6\n"
+}

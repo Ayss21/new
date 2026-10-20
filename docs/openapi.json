@@ -1,0 +1,4465 @@
+{
+ "openapi": "3.1.0",
+ "info": {
+  "title": "DemandIQ API",
+  "description": "Backend for DemandIQ \u2014 demand forecasting and inventory management on Microsoft SQL Server. The request and response shapes follow docs/API_CONTRACT.md. Errors are `{\"detail\": {\"code\", \"message\", \"fields\"?}}`. Sign in with `POST /api/auth/login`, then click **Authorize** and paste the `accessToken`.",
+  "version": "1.3.0"
+ },
+ "paths": {
+  "/api/auth/login": {
+   "post": {
+    "tags": [
+     "Authentication"
+    ],
+    "summary": "Sign in with the role picked on the sign-in page",
+    "operationId": "login_api_auth_login_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/LoginRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/LoginOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/auth/me": {
+   "get": {
+    "tags": [
+     "Authentication"
+    ],
+    "summary": "The signed-in user (checks a saved token after a refresh)",
+    "operationId": "me_api_auth_me_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/MeOut"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/auth/logout": {
+   "post": {
+    "tags": [
+     "Authentication"
+    ],
+    "summary": "End the session (the token stops working)",
+    "operationId": "logout_api_auth_logout_post",
+    "responses": {
+     "204": {
+      "description": "Successful Response"
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/auth/roles": {
+   "get": {
+    "tags": [
+     "Authentication"
+    ],
+    "summary": "Each role with the screens it can open (public)",
+    "operationId": "roles_api_auth_roles_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/RoleOut"
+         },
+         "type": "array",
+         "title": "Response Roles Api Auth Roles Get"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/auth/password-reset": {
+   "post": {
+    "tags": [
+     "Authentication"
+    ],
+    "summary": "Ask for reset instructions (always 202)",
+    "operationId": "password_reset_api_auth_password_reset_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/PasswordResetRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "202": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/MessageOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/dashboard/summary": {
+   "get": {
+    "tags": [
+     "Dashboard"
+    ],
+    "summary": "KPI cards for the signed-in user's role",
+    "operationId": "summary_api_dashboard_summary_get",
+    "parameters": [
+     {
+      "name": "start",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "YYYY-MM-DD",
+       "title": "Start"
+      },
+      "description": "YYYY-MM-DD"
+     },
+     {
+      "name": "end",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "YYYY-MM-DD",
+       "title": "End"
+      },
+      "description": "YYYY-MM-DD"
+     },
+     {
+      "name": "category",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Category"
+      }
+     },
+     {
+      "name": "sku",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Sku"
+      }
+     },
+     {
+      "name": "region",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Region"
+      }
+     },
+     {
+      "name": "model",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Model"
+      }
+     },
+     {
+      "name": "status",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Safe, Warning, Critical (Inventory Supervisor)",
+       "title": "Status"
+      },
+      "description": "Safe, Warning, Critical (Inventory Supervisor)"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SummaryOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/sales": {
+   "get": {
+    "tags": [
+     "Sales data"
+    ],
+    "summary": "Sales records (all, or those matching the global filters)",
+    "operationId": "list_sales_api_sales_get",
+    "parameters": [
+     {
+      "name": "start",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Start"
+      }
+     },
+     {
+      "name": "end",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "End"
+      }
+     },
+     {
+      "name": "category",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Category"
+      }
+     },
+     {
+      "name": "sku",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Sku"
+      }
+     },
+     {
+      "name": "region",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Region"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/SaleOut"
+         },
+         "title": "Response List Sales Api Sales Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/datasets": {
+   "get": {
+    "tags": [
+     "Sales data"
+    ],
+    "summary": "Every upload attempt, newest first, with its lineage",
+    "operationId": "list_datasets_api_datasets_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/DatasetOut"
+         },
+         "type": "array",
+         "title": "Response List Datasets Api Datasets Get"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   },
+   "post": {
+    "tags": [
+     "Sales data"
+    ],
+    "summary": "Upload a sales file of any layout (multipart field: file)",
+    "operationId": "upload_api_datasets_post",
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "$ref": "#/components/schemas/Body_upload_api_datasets_post"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/UploadOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/datasets/{dataset_id}/clean": {
+   "post": {
+    "tags": [
+     "Sales data"
+    ],
+    "summary": "Clean a Pending upload and merge it into the sales history",
+    "operationId": "clean_api_datasets__dataset_id__clean_post",
+    "parameters": [
+     {
+      "name": "dataset_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Dataset Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "anyOf": [
+         {
+          "$ref": "#/components/schemas/CleanRequest"
+         },
+         {
+          "type": "null"
+         }
+        ],
+        "title": "Body"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CleanOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/forecasts": {
+   "get": {
+    "tags": [
+     "Forecasting"
+    ],
+    "summary": "Saved runs, newest first",
+    "operationId": "list_forecasts_api_forecasts_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/ForecastOut"
+         },
+         "type": "array",
+         "title": "Response List Forecasts Api Forecasts Get"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   },
+   "post": {
+    "tags": [
+     "Forecasting"
+    ],
+    "summary": "Run a model for one product and save the run",
+    "operationId": "run_api_forecasts_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ForecastRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ForecastOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/forecasts/lineage": {
+   "get": {
+    "tags": [
+     "Forecasting"
+    ],
+    "summary": "Which uploads a forecast with these settings would use",
+    "operationId": "lineage_api_forecasts_lineage_get",
+    "parameters": [
+     {
+      "name": "sku",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Sku"
+      }
+     },
+     {
+      "name": "start",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Start"
+      }
+     },
+     {
+      "name": "end",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "End"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/LineageOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/forecasts/{forecast_id}": {
+   "get": {
+    "tags": [
+     "Forecasting"
+    ],
+    "summary": "One saved run",
+    "operationId": "get_forecast_api_forecasts__forecast_id__get",
+    "parameters": [
+     {
+      "name": "forecast_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Forecast Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ForecastOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/forecasts/compare": {
+   "post": {
+    "tags": [
+     "Forecasting"
+    ],
+    "summary": "All three models on the same settings (nothing saved)",
+    "operationId": "compare_api_forecasts_compare_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ForecastRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CompareOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/forecasts/recommendation": {
+   "post": {
+    "tags": [
+     "Forecasting"
+    ],
+    "summary": "Most accurate model for a group of products",
+    "operationId": "recommendation_api_forecasts_recommendation_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/RecommendationRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RecommendationOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/inventory": {
+   "get": {
+    "tags": [
+     "Inventory"
+    ],
+    "summary": "Every product with its stock position",
+    "operationId": "list_inventory_api_inventory_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/InventoryOut"
+         },
+         "type": "array",
+         "title": "Response List Inventory Api Inventory Get"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/inventory/alerts": {
+   "get": {
+    "tags": [
+     "Inventory"
+    ],
+    "summary": "Products below their reorder level, most urgent first",
+    "operationId": "alerts_api_inventory_alerts_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/AlertOut"
+         },
+         "type": "array",
+         "title": "Response Alerts Api Inventory Alerts Get"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/inventory/snapshots": {
+   "get": {
+    "tags": [
+     "Inventory"
+    ],
+    "summary": "Month-end stock per product",
+    "operationId": "snapshots_api_inventory_snapshots_get",
+    "parameters": [
+     {
+      "name": "start",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "YYYY-MM",
+       "title": "Start"
+      },
+      "description": "YYYY-MM"
+     },
+     {
+      "name": "end",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "YYYY-MM",
+       "title": "End"
+      },
+      "description": "YYYY-MM"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/SnapshotOut"
+         },
+         "title": "Response Snapshots Api Inventory Snapshots Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/inventory/{sku}": {
+   "patch": {
+    "tags": [
+     "Inventory"
+    ],
+    "summary": "Set the stock after a count or adjustment",
+    "operationId": "update_stock_api_inventory__sku__patch",
+    "parameters": [
+     {
+      "name": "sku",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Sku"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/StockUpdate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/InventoryOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/reorders": {
+   "get": {
+    "tags": [
+     "Inventory"
+    ],
+    "summary": "Every reorder, newest first",
+    "operationId": "list_reorders_api_reorders_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/ReorderOut"
+         },
+         "type": "array",
+         "title": "Response List Reorders Api Reorders Get"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   },
+   "post": {
+    "tags": [
+     "Inventory"
+    ],
+    "summary": "Place a reorder (status Ordered)",
+    "operationId": "create_reorder_api_reorders_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ReorderCreate"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReorderOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/reorders/{reorder_id}": {
+   "patch": {
+    "tags": [
+     "Inventory"
+    ],
+    "summary": "Mark delivered ({\"status\": \"Delivered\"}): adds the quantity to stock",
+    "operationId": "update_reorder_api_reorders__reorder_id__patch",
+    "parameters": [
+     {
+      "name": "reorder_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Reorder Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ReorderUpdate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReorderOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/users": {
+   "get": {
+    "tags": [
+     "Administration",
+     "Administration"
+    ],
+    "summary": "Every account (never with passwords)",
+    "operationId": "list_users_api_users_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/UserOut"
+         },
+         "type": "array",
+         "title": "Response List Users Api Users Get"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   },
+   "post": {
+    "tags": [
+     "Administration"
+    ],
+    "summary": "Create an account (the server gives the employee ID and work email)",
+    "operationId": "create_user_api_users_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/UserCreate"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/UserOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/users/{user_id}": {
+   "patch": {
+    "tags": [
+     "Administration"
+    ],
+    "summary": "Change a user's name, email, department, role, status or password",
+    "operationId": "update_user_api_users__user_id__patch",
+    "parameters": [
+     {
+      "name": "user_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "User Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/UserUpdate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/UserOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/categories": {
+   "get": {
+    "tags": [
+     "Administration",
+     "Catalog"
+    ],
+    "summary": "Product categories with their product counts",
+    "operationId": "list_categories_api_categories_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/CategoryOut"
+         },
+         "type": "array",
+         "title": "Response List Categories Api Categories Get"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   },
+   "post": {
+    "tags": [
+     "Administration",
+     "Catalog"
+    ],
+    "summary": "Create a category",
+    "operationId": "create_category_api_categories_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/CategoryCreate"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CategoryOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/categories/{category_id}": {
+   "patch": {
+    "tags": [
+     "Administration",
+     "Catalog"
+    ],
+    "summary": "Rename, describe or (de)activate a category",
+    "operationId": "update_category_api_categories__category_id__patch",
+    "parameters": [
+     {
+      "name": "category_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Category Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/CategoryUpdate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CategoryOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/roles/permissions": {
+   "get": {
+    "tags": [
+     "Administration"
+    ],
+    "summary": "The action permission matrix as the Admin set it",
+    "operationId": "permissions_api_roles_permissions_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": {
+          "additionalProperties": {
+           "type": "string"
+          },
+          "type": "object"
+         },
+         "type": "object",
+         "title": "Response Permissions Api Roles Permissions Get"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   },
+   "patch": {
+    "tags": [
+     "Administration"
+    ],
+    "summary": "Change one cell of the matrix",
+    "operationId": "update_permission_api_roles_permissions_patch",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/PermissionUpdate"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": {
+          "additionalProperties": {
+           "type": "string"
+          },
+          "type": "object"
+         },
+         "type": "object",
+         "title": "Response Update Permission Api Roles Permissions Patch"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/roles/screens": {
+   "get": {
+    "tags": [
+     "Administration"
+    ],
+    "summary": "Role ID \u2192 the screen IDs it can open",
+    "operationId": "screens_api_roles_screens_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": {
+          "items": {
+           "type": "string"
+          },
+          "type": "array"
+         },
+         "type": "object",
+         "title": "Response Screens Api Roles Screens Get"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/roles/{role_id}/screens": {
+   "put": {
+    "tags": [
+     "Administration"
+    ],
+    "summary": "Replace one role's screens",
+    "operationId": "update_screens_api_roles__role_id__screens_put",
+    "parameters": [
+     {
+      "name": "role_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Role Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ScreensUpdate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "additionalProperties": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         },
+         "title": "Response Update Screens Api Roles  Role Id  Screens Put"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/roles/restore-defaults": {
+   "post": {
+    "tags": [
+     "Administration"
+    ],
+    "summary": "Action permissions and screen access back to the defaults",
+    "operationId": "restore_defaults_api_roles_restore_defaults_post",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RestoreOut"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/reports/types": {
+   "get": {
+    "tags": [
+     "Reports & Exports"
+    ],
+    "summary": "The report types the signed-in user's role may generate",
+    "operationId": "types_api_reports_types_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/ReportTypeOut"
+         },
+         "type": "array",
+         "title": "Response Types Api Reports Types Get"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/reports": {
+   "get": {
+    "tags": [
+     "Reports & Exports"
+    ],
+    "summary": "Report history: your reports (the Admin: everyone's), newest first",
+    "operationId": "list_reports_api_reports_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/ReportOut"
+         },
+         "type": "array",
+         "title": "Response List Reports Api Reports Get"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   },
+   "post": {
+    "tags": [
+     "Reports & Exports"
+    ],
+    "summary": "Generate a report in the background (poll GET /reports/{id})",
+    "operationId": "create_api_reports_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ReportRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "202": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReportOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/reports/email": {
+   "post": {
+    "tags": [
+     "Reports & Exports"
+    ],
+    "summary": "Generate a report and email it",
+    "operationId": "email_api_reports_email_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/EmailReportRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "202": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/EmailQueuedOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/reports/{report_id}": {
+   "get": {
+    "tags": [
+     "Reports & Exports"
+    ],
+    "summary": "A report and its status",
+    "operationId": "get_report_api_reports__report_id__get",
+    "parameters": [
+     {
+      "name": "report_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Report Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReportOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/reports/{report_id}/file": {
+   "get": {
+    "tags": [
+     "Reports & Exports"
+    ],
+    "summary": "Download the report file (PDF, XLSX or CSV)",
+    "operationId": "download_api_reports__report_id__file_get",
+    "parameters": [
+     {
+      "name": "report_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Report Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/pdf": {},
+       "text/csv": {},
+       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {}
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/activity": {
+   "get": {
+    "tags": [
+     "Logs"
+    ],
+    "summary": "The audit log, newest first",
+    "operationId": "activity_api_activity_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/ActivityOut"
+         },
+         "type": "array",
+         "title": "Response Activity Api Activity Get"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   },
+   "post": {
+    "tags": [
+     "Logs"
+    ],
+    "summary": "Record an event only the browser sees (Screen access denied)",
+    "operationId": "record_api_activity_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ActivityCreate"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ActivityOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/sessions": {
+   "get": {
+    "tags": [
+     "Logs"
+    ],
+    "summary": "Sign-in sessions, newest first",
+    "operationId": "sessions_api_sessions_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/SessionOut"
+         },
+         "type": "array",
+         "title": "Response Sessions Api Sessions Get"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/errors": {
+   "get": {
+    "tags": [
+     "Logs"
+    ],
+    "summary": "The error log, newest first",
+    "operationId": "errors_api_errors_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/ErrorOut"
+         },
+         "type": "array",
+         "title": "Response Errors Api Errors Get"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/errors/{error_id}": {
+   "patch": {
+    "tags": [
+     "Logs"
+    ],
+    "summary": "Mark an error Open, Investigating or Resolved, with notes",
+    "operationId": "update_error_api_errors__error_id__patch",
+    "parameters": [
+     {
+      "name": "error_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Error Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ErrorUpdate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ErrorOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "bearerAuth": []
+     }
+    ]
+   }
+  },
+  "/api/health": {
+   "get": {
+    "tags": [
+     "System"
+    ],
+    "summary": "Is the API up, and can it reach the database?",
+    "operationId": "health_api_health_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HealthOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "schemas": {
+   "ActivityCreate": {
+    "properties": {
+     "action": {
+      "title": "Action",
+      "examples": [
+       "Screen access denied"
+      ]
+     },
+     "details": {
+      "title": "Details",
+      "default": "",
+      "examples": [
+       "#/administration \u00b7 Store Manager"
+      ]
+     }
+    },
+    "type": "object",
+    "title": "ActivityCreate"
+   },
+   "ActivityOut": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "at": {
+      "type": "string",
+      "title": "At"
+     },
+     "sessionId": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Sessionid"
+     },
+     "userId": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Userid"
+     },
+     "userName": {
+      "type": "string",
+      "title": "Username"
+     },
+     "roleId": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Roleid"
+     },
+     "action": {
+      "type": "string",
+      "title": "Action"
+     },
+     "module": {
+      "type": "string",
+      "title": "Module"
+     },
+     "details": {
+      "type": "string",
+      "title": "Details"
+     },
+     "status": {
+      "type": "string",
+      "title": "Status"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "at",
+     "sessionId",
+     "userId",
+     "userName",
+     "roleId",
+     "action",
+     "module",
+     "details",
+     "status"
+    ],
+    "title": "ActivityOut"
+   },
+   "AlertOut": {
+    "properties": {
+     "sku": {
+      "type": "string",
+      "title": "Sku"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "status": {
+      "type": "string",
+      "title": "Status"
+     },
+     "stock": {
+      "type": "integer",
+      "title": "Stock"
+     },
+     "reorder": {
+      "type": "integer",
+      "title": "Reorder"
+     },
+     "safety": {
+      "type": "integer",
+      "title": "Safety"
+     },
+     "days": {
+      "type": "integer",
+      "title": "Days"
+     },
+     "suggested": {
+      "type": "integer",
+      "title": "Suggested"
+     },
+     "message": {
+      "type": "string",
+      "title": "Message"
+     }
+    },
+    "type": "object",
+    "required": [
+     "sku",
+     "name",
+     "status",
+     "stock",
+     "reorder",
+     "safety",
+     "days",
+     "suggested",
+     "message"
+    ],
+    "title": "AlertOut"
+   },
+   "Body_upload_api_datasets_post": {
+    "properties": {
+     "file": {
+      "type": "string",
+      "contentMediaType": "application/octet-stream",
+      "title": "File",
+      "description": "CSV, TSV, text or .xlsx \u2014 judged by its contents"
+     }
+    },
+    "type": "object",
+    "required": [
+     "file"
+    ],
+    "title": "Body_upload_api_datasets_post"
+   },
+   "CategoryCreate": {
+    "properties": {
+     "id": {
+      "title": "Id",
+      "description": "Optional, like CAT-006"
+     },
+     "name": {
+      "title": "Name",
+      "examples": [
+       "Specialty Resins"
+      ]
+     },
+     "description": {
+      "title": "Description",
+      "default": "",
+      "examples": [
+       "High-performance resin grades"
+      ]
+     }
+    },
+    "type": "object",
+    "title": "CategoryCreate"
+   },
+   "CategoryOut": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "description": {
+      "type": "string",
+      "title": "Description"
+     },
+     "status": {
+      "type": "string",
+      "title": "Status"
+     },
+     "products": {
+      "type": "integer",
+      "title": "Products"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "description",
+     "status",
+     "products"
+    ],
+    "title": "CategoryOut"
+   },
+   "CategoryUpdate": {
+    "properties": {
+     "name": {
+      "title": "Name"
+     },
+     "description": {
+      "title": "Description"
+     },
+     "status": {
+      "title": "Status"
+     }
+    },
+    "type": "object",
+    "title": "CategoryUpdate"
+   },
+   "CleanOut": {
+    "properties": {
+     "dataset": {
+      "$ref": "#/components/schemas/DatasetOut"
+     },
+     "summary": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Summary"
+     },
+     "salesRange": {
+      "additionalProperties": {
+       "type": "string"
+      },
+      "type": "object",
+      "title": "Salesrange"
+     }
+    },
+    "type": "object",
+    "required": [
+     "dataset",
+     "summary",
+     "salesRange"
+    ],
+    "title": "CleanOut"
+   },
+   "CleanRequest": {
+    "properties": {
+     "capOutliers": {
+      "title": "Capoutliers",
+      "description": "Cap extreme values per product",
+      "default": true
+     },
+     "overlap": {
+      "title": "Overlap",
+      "description": "\"replace\" or \"skip\" a record whose date and product exist",
+      "default": "replace"
+     }
+    },
+    "type": "object",
+    "title": "CleanRequest"
+   },
+   "CompareOut": {
+    "properties": {
+     "sku": {
+      "type": "string",
+      "title": "Sku"
+     },
+     "horizon": {
+      "type": "integer",
+      "title": "Horizon"
+     },
+     "startDate": {
+      "type": "string",
+      "title": "Startdate"
+     },
+     "endDate": {
+      "type": "string",
+      "title": "Enddate"
+     },
+     "results": {
+      "items": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "type": "array",
+      "title": "Results"
+     }
+    },
+    "type": "object",
+    "required": [
+     "sku",
+     "horizon",
+     "startDate",
+     "endDate",
+     "results"
+    ],
+    "title": "CompareOut"
+   },
+   "DatasetLineage": {
+    "properties": {
+     "recordsInHistory": {
+      "type": "integer",
+      "title": "Recordsinhistory"
+     },
+     "skus": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Skus"
+     },
+     "forecastedSkus": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Forecastedskus"
+     },
+     "forecastIds": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Forecastids"
+     }
+    },
+    "type": "object",
+    "required": [
+     "recordsInHistory",
+     "skus",
+     "forecastedSkus",
+     "forecastIds"
+    ],
+    "title": "DatasetLineage"
+   },
+   "DatasetOut": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "fileName": {
+      "type": "string",
+      "title": "Filename"
+     },
+     "uploadedAt": {
+      "type": "string",
+      "title": "Uploadedat"
+     },
+     "uploaderId": {
+      "type": "string",
+      "title": "Uploaderid"
+     },
+     "uploader": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Uploader"
+     },
+     "recordCount": {
+      "type": "integer",
+      "title": "Recordcount"
+     },
+     "validation": {
+      "type": "string",
+      "title": "Validation"
+     },
+     "checks": {
+      "anyOf": [
+       {
+        "additionalProperties": {
+         "type": "integer"
+        },
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Checks"
+     },
+     "coverage": {
+      "anyOf": [
+       {
+        "additionalProperties": true,
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Coverage"
+     },
+     "cleaning": {
+      "type": "string",
+      "title": "Cleaning"
+     },
+     "cleanedAt": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Cleanedat"
+     },
+     "cleaningSummary": {
+      "anyOf": [
+       {
+        "additionalProperties": true,
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Cleaningsummary"
+     },
+     "pendingCount": {
+      "type": "integer",
+      "title": "Pendingcount"
+     },
+     "newProducts": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Newproducts"
+     },
+     "forecasting": {
+      "type": "string",
+      "title": "Forecasting"
+     },
+     "forecastedAt": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Forecastedat"
+     },
+     "lineage": {
+      "$ref": "#/components/schemas/DatasetLineage"
+     },
+     "error": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Error"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "fileName",
+     "uploadedAt",
+     "uploaderId",
+     "uploader",
+     "recordCount",
+     "validation",
+     "checks",
+     "coverage",
+     "cleaning",
+     "cleanedAt",
+     "cleaningSummary",
+     "pendingCount",
+     "newProducts",
+     "forecasting",
+     "forecastedAt",
+     "lineage",
+     "error"
+    ],
+    "title": "DatasetOut"
+   },
+   "EmailQueuedOut": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "status": {
+      "type": "string",
+      "title": "Status"
+     },
+     "recipients": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Recipients"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "format": {
+      "type": "string",
+      "title": "Format"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "status",
+     "recipients",
+     "name",
+     "format"
+    ],
+    "title": "EmailQueuedOut"
+   },
+   "EmailReportRequest": {
+    "properties": {
+     "name": {
+      "title": "Name",
+      "examples": [
+       "Sales Summary"
+      ]
+     },
+     "format": {
+      "title": "Format",
+      "examples": [
+       "PDF"
+      ]
+     },
+     "filters": {
+      "title": "Filters",
+      "examples": [
+       {
+        "end": "2025-06-18",
+        "region": [
+         "Central"
+        ],
+        "start": "2025-03-19"
+       }
+      ]
+     },
+     "recipients": {
+      "title": "Recipients",
+      "examples": [
+       [
+        "regional.lead@demandiq.test"
+       ]
+      ]
+     },
+     "subject": {
+      "title": "Subject",
+      "default": "",
+      "examples": [
+       "Sales summary \u00b7 June"
+      ]
+     },
+     "message": {
+      "title": "Message",
+      "default": "",
+      "examples": [
+       "This month's sales."
+      ]
+     }
+    },
+    "type": "object",
+    "title": "EmailReportRequest"
+   },
+   "ErrorOut": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "at": {
+      "type": "string",
+      "title": "At"
+     },
+     "module": {
+      "type": "string",
+      "title": "Module"
+     },
+     "type": {
+      "type": "string",
+      "title": "Type"
+     },
+     "severity": {
+      "type": "string",
+      "title": "Severity"
+     },
+     "message": {
+      "type": "string",
+      "title": "Message"
+     },
+     "status": {
+      "type": "string",
+      "title": "Status"
+     },
+     "notes": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Notes"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "at",
+     "module",
+     "type",
+     "severity",
+     "message",
+     "status",
+     "notes"
+    ],
+    "title": "ErrorOut"
+   },
+   "ErrorUpdate": {
+    "properties": {
+     "status": {
+      "title": "Status",
+      "examples": [
+       "Investigating"
+      ]
+     },
+     "notes": {
+      "title": "Notes",
+      "default": "",
+      "examples": [
+       "Checking why the filters matched no sales"
+      ]
+     }
+    },
+    "type": "object",
+    "title": "ErrorUpdate"
+   },
+   "ForecastOut": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "sku": {
+      "type": "string",
+      "title": "Sku"
+     },
+     "model": {
+      "type": "string",
+      "title": "Model"
+     },
+     "horizon": {
+      "type": "integer",
+      "title": "Horizon"
+     },
+     "status": {
+      "type": "string",
+      "title": "Status"
+     },
+     "startDate": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Startdate"
+     },
+     "endDate": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Enddate"
+     },
+     "configuration": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Configuration"
+     },
+     "metrics": {
+      "$ref": "#/components/schemas/Metrics"
+     },
+     "evaluation": {
+      "additionalProperties": {
+       "anyOf": [
+        {
+         "type": "integer"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "type": "object",
+      "title": "Evaluation"
+     },
+     "points": {
+      "items": {
+       "$ref": "#/components/schemas/ForecastPointOut"
+      },
+      "type": "array",
+      "title": "Points"
+     },
+     "lineage": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/Lineage"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "generatedAt": {
+      "type": "string",
+      "title": "Generatedat"
+     },
+     "generatedBy": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/Person"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "sku",
+     "model",
+     "horizon",
+     "status",
+     "startDate",
+     "endDate",
+     "configuration",
+     "metrics",
+     "evaluation",
+     "points",
+     "lineage",
+     "generatedAt",
+     "generatedBy"
+    ],
+    "title": "ForecastOut"
+   },
+   "ForecastPointOut": {
+    "properties": {
+     "date": {
+      "type": "string",
+      "title": "Date"
+     },
+     "predicted": {
+      "type": "integer",
+      "title": "Predicted"
+     }
+    },
+    "type": "object",
+    "required": [
+     "date",
+     "predicted"
+    ],
+    "title": "ForecastPointOut"
+   },
+   "ForecastRequest": {
+    "properties": {
+     "sku": {
+      "title": "Sku",
+      "examples": [
+       "PP-4012"
+      ]
+     },
+     "model": {
+      "title": "Model",
+      "description": "Moving Average, Linear Regression or ARIMA",
+      "examples": [
+       "ARIMA"
+      ]
+     },
+     "horizon": {
+      "title": "Horizon",
+      "description": "Days to forecast, 1\u2013365",
+      "examples": [
+       30
+      ]
+     },
+     "startDate": {
+      "title": "Startdate",
+      "examples": [
+       "2025-03-19"
+      ]
+     },
+     "endDate": {
+      "title": "Enddate",
+      "examples": [
+       "2025-06-18"
+      ]
+     },
+     "windowSize": {
+      "title": "Windowsize",
+      "description": "Moving Average: 2\u201360, default 7"
+     },
+     "order": {
+      "title": "Order",
+      "description": "ARIMA [p, d, q]: p 0\u20135, d 0\u20132, q 0\u20135, default [2, 1, 2]"
+     }
+    },
+    "type": "object",
+    "title": "ForecastRequest"
+   },
+   "HTTPValidationError": {
+    "properties": {
+     "detail": {
+      "items": {
+       "$ref": "#/components/schemas/ValidationError"
+      },
+      "type": "array",
+      "title": "Detail"
+     }
+    },
+    "type": "object",
+    "title": "HTTPValidationError"
+   },
+   "HealthOut": {
+    "properties": {
+     "status": {
+      "type": "string",
+      "title": "Status"
+     },
+     "database": {
+      "type": "string",
+      "title": "Database"
+     },
+     "version": {
+      "type": "string",
+      "title": "Version"
+     }
+    },
+    "type": "object",
+    "required": [
+     "status",
+     "database",
+     "version"
+    ],
+    "title": "HealthOut"
+   },
+   "InventoryOut": {
+    "properties": {
+     "sku": {
+      "type": "string",
+      "title": "Sku"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "category": {
+      "type": "string",
+      "title": "Category"
+     },
+     "location": {
+      "type": "string",
+      "title": "Location"
+     },
+     "region": {
+      "type": "string",
+      "title": "Region"
+     },
+     "channel": {
+      "type": "string",
+      "title": "Channel"
+     },
+     "unitPrice": {
+      "type": "number",
+      "title": "Unitprice"
+     },
+     "unitCost": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Unitcost"
+     },
+     "reorder": {
+      "type": "integer",
+      "title": "Reorder"
+     },
+     "safety": {
+      "type": "integer",
+      "title": "Safety"
+     },
+     "stock": {
+      "type": "integer",
+      "title": "Stock"
+     },
+     "demand": {
+      "type": "integer",
+      "title": "Demand"
+     },
+     "status": {
+      "type": "string",
+      "enum": [
+       "Safe",
+       "Warning",
+       "Critical"
+      ],
+      "title": "Status"
+     },
+     "suggested": {
+      "type": "integer",
+      "title": "Suggested"
+     },
+     "days": {
+      "type": "integer",
+      "title": "Days"
+     }
+    },
+    "type": "object",
+    "required": [
+     "sku",
+     "name",
+     "category",
+     "location",
+     "region",
+     "channel",
+     "unitPrice",
+     "unitCost",
+     "reorder",
+     "safety",
+     "stock",
+     "demand",
+     "status",
+     "suggested",
+     "days"
+    ],
+    "title": "InventoryOut"
+   },
+   "Kpi": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "label": {
+      "type": "string",
+      "title": "Label"
+     },
+     "value": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Value"
+     },
+     "format": {
+      "type": "string",
+      "title": "Format"
+     },
+     "detail": {
+      "type": "string",
+      "title": "Detail"
+     },
+     "icon": {
+      "type": "string",
+      "title": "Icon"
+     },
+     "tone": {
+      "type": "string",
+      "title": "Tone"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "label",
+     "value",
+     "format",
+     "detail",
+     "icon",
+     "tone"
+    ],
+    "title": "Kpi"
+   },
+   "Lineage": {
+    "properties": {
+     "records": {
+      "type": "integer",
+      "title": "Records"
+     },
+     "sources": {
+      "items": {
+       "$ref": "#/components/schemas/LineageSource"
+      },
+      "type": "array",
+      "title": "Sources"
+     },
+     "waiting": {
+      "items": {
+       "$ref": "#/components/schemas/LineageSource"
+      },
+      "type": "array",
+      "title": "Waiting"
+     }
+    },
+    "type": "object",
+    "required": [
+     "records",
+     "sources",
+     "waiting"
+    ],
+    "title": "Lineage"
+   },
+   "LineageOut": {
+    "properties": {
+     "records": {
+      "type": "integer",
+      "title": "Records"
+     },
+     "sources": {
+      "items": {
+       "$ref": "#/components/schemas/LineageSource"
+      },
+      "type": "array",
+      "title": "Sources"
+     },
+     "waiting": {
+      "items": {
+       "$ref": "#/components/schemas/LineageSource"
+      },
+      "type": "array",
+      "title": "Waiting"
+     },
+     "sku": {
+      "type": "string",
+      "title": "Sku"
+     },
+     "startDate": {
+      "type": "string",
+      "title": "Startdate"
+     },
+     "endDate": {
+      "type": "string",
+      "title": "Enddate"
+     },
+     "days": {
+      "type": "integer",
+      "title": "Days"
+     }
+    },
+    "type": "object",
+    "required": [
+     "records",
+     "sources",
+     "waiting",
+     "sku",
+     "startDate",
+     "endDate",
+     "days"
+    ],
+    "title": "LineageOut"
+   },
+   "LineageSource": {
+    "properties": {
+     "datasetId": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Datasetid"
+     },
+     "fileName": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Filename"
+     },
+     "records": {
+      "type": "integer",
+      "title": "Records"
+     },
+     "firstDate": {
+      "type": "string",
+      "title": "Firstdate"
+     },
+     "lastDate": {
+      "type": "string",
+      "title": "Lastdate"
+     }
+    },
+    "type": "object",
+    "required": [
+     "datasetId",
+     "fileName",
+     "records",
+     "firstDate",
+     "lastDate"
+    ],
+    "title": "LineageSource"
+   },
+   "LoginOut": {
+    "properties": {
+     "expiresAt": {
+      "type": "string",
+      "title": "Expiresat"
+     },
+     "session": {
+      "$ref": "#/components/schemas/SessionInfo"
+     },
+     "user": {
+      "$ref": "#/components/schemas/UserOut"
+     },
+     "permissions": {
+      "additionalProperties": {
+       "type": "string",
+       "enum": [
+        "Yes",
+        "View",
+        "Review",
+        "No"
+       ]
+      },
+      "type": "object",
+      "title": "Permissions"
+     },
+     "screens": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Screens"
+     },
+     "accessToken": {
+      "type": "string",
+      "title": "Accesstoken"
+     },
+     "tokenType": {
+      "type": "string",
+      "title": "Tokentype",
+      "default": "bearer"
+     }
+    },
+    "type": "object",
+    "required": [
+     "expiresAt",
+     "session",
+     "user",
+     "permissions",
+     "screens",
+     "accessToken"
+    ],
+    "title": "LoginOut"
+   },
+   "LoginRequest": {
+    "properties": {
+     "login": {
+      "title": "Login",
+      "description": "Email or employee ID (case-insensitive)",
+      "examples": [
+       "analyst@demo.demandiq"
+      ]
+     },
+     "password": {
+      "title": "Password",
+      "examples": [
+       "Analyze123!"
+      ]
+     },
+     "roleId": {
+      "title": "Roleid",
+      "description": "1 Store Manager, 2 Data Analyst, 3 Inventory Supervisor, 4 Admin",
+      "examples": [
+       2
+      ]
+     },
+     "remember": {
+      "title": "Remember",
+      "description": "true \u2192 7-day session, otherwise 8 hours",
+      "default": false
+     }
+    },
+    "type": "object",
+    "title": "LoginRequest"
+   },
+   "MeOut": {
+    "properties": {
+     "expiresAt": {
+      "type": "string",
+      "title": "Expiresat"
+     },
+     "session": {
+      "$ref": "#/components/schemas/SessionInfo"
+     },
+     "user": {
+      "$ref": "#/components/schemas/UserOut"
+     },
+     "permissions": {
+      "additionalProperties": {
+       "type": "string",
+       "enum": [
+        "Yes",
+        "View",
+        "Review",
+        "No"
+       ]
+      },
+      "type": "object",
+      "title": "Permissions"
+     },
+     "screens": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Screens"
+     }
+    },
+    "type": "object",
+    "required": [
+     "expiresAt",
+     "session",
+     "user",
+     "permissions",
+     "screens"
+    ],
+    "title": "MeOut"
+   },
+   "MessageOut": {
+    "properties": {
+     "message": {
+      "type": "string",
+      "title": "Message"
+     }
+    },
+    "type": "object",
+    "required": [
+     "message"
+    ],
+    "title": "MessageOut"
+   },
+   "Metrics": {
+    "properties": {
+     "mae": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Mae"
+     },
+     "rmse": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Rmse"
+     },
+     "mape": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Mape"
+     }
+    },
+    "type": "object",
+    "required": [
+     "mae",
+     "rmse",
+     "mape"
+    ],
+    "title": "Metrics"
+   },
+   "PasswordResetRequest": {
+    "properties": {
+     "email": {
+      "title": "Email",
+      "examples": [
+       "analyst@demo.demandiq"
+      ]
+     }
+    },
+    "type": "object",
+    "title": "PasswordResetRequest"
+   },
+   "PermissionUpdate": {
+    "properties": {
+     "action": {
+      "title": "Action",
+      "examples": [
+       "Run forecasts"
+      ]
+     },
+     "roleId": {
+      "title": "Roleid",
+      "examples": [
+       1
+      ]
+     },
+     "value": {
+      "title": "Value",
+      "examples": [
+       "View"
+      ]
+     }
+    },
+    "type": "object",
+    "title": "PermissionUpdate"
+   },
+   "Person": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "name"
+    ],
+    "title": "Person"
+   },
+   "RecommendationOut": {
+    "properties": {
+     "skus": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Skus"
+     },
+     "startDate": {
+      "type": "string",
+      "title": "Startdate"
+     },
+     "endDate": {
+      "type": "string",
+      "title": "Enddate"
+     },
+     "days": {
+      "type": "integer",
+      "title": "Days"
+     },
+     "testDays": {
+      "type": "integer",
+      "title": "Testdays"
+     },
+     "metric": {
+      "type": "string",
+      "title": "Metric"
+     },
+     "recommended": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Recommended"
+     },
+     "reason": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Reason"
+     },
+     "margin": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Margin"
+     },
+     "close": {
+      "type": "boolean",
+      "title": "Close"
+     },
+     "ranked": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Ranked"
+     },
+     "models": {
+      "items": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "type": "array",
+      "title": "Models"
+     }
+    },
+    "type": "object",
+    "required": [
+     "skus",
+     "startDate",
+     "endDate",
+     "days",
+     "testDays",
+     "metric",
+     "recommended",
+     "reason",
+     "margin",
+     "close",
+     "ranked",
+     "models"
+    ],
+    "title": "RecommendationOut"
+   },
+   "RecommendationRequest": {
+    "properties": {
+     "skus": {
+      "title": "Skus",
+      "examples": [
+       [
+        "PP-4012",
+        "PE-7820"
+       ]
+      ]
+     },
+     "filters": {
+      "title": "Filters",
+      "examples": [
+       {
+        "end": "2025-06-18",
+        "region": [
+         "Central"
+        ],
+        "start": "2025-03-19"
+       }
+      ]
+     }
+    },
+    "type": "object",
+    "title": "RecommendationRequest"
+   },
+   "ReorderCreate": {
+    "properties": {
+     "sku": {
+      "title": "Sku",
+      "examples": [
+       "PP-4012"
+      ]
+     },
+     "quantity": {
+      "title": "Quantity",
+      "examples": [
+       600
+      ]
+     },
+     "supplier": {
+      "title": "Supplier",
+      "examples": [
+       "Gulf Polymers Supply"
+      ]
+     }
+    },
+    "type": "object",
+    "title": "ReorderCreate"
+   },
+   "ReorderOut": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "sku": {
+      "type": "string",
+      "title": "Sku"
+     },
+     "quantity": {
+      "type": "integer",
+      "title": "Quantity"
+     },
+     "supplier": {
+      "type": "string",
+      "title": "Supplier"
+     },
+     "status": {
+      "type": "string",
+      "enum": [
+       "Ordered",
+       "Delivered"
+      ],
+      "title": "Status"
+     },
+     "orderedAt": {
+      "type": "string",
+      "title": "Orderedat"
+     },
+     "deliveredAt": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Deliveredat"
+     },
+     "userId": {
+      "type": "string",
+      "title": "Userid"
+     },
+     "userName": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Username"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "sku",
+     "quantity",
+     "supplier",
+     "status",
+     "orderedAt",
+     "deliveredAt",
+     "userId",
+     "userName"
+    ],
+    "title": "ReorderOut"
+   },
+   "ReorderUpdate": {
+    "properties": {
+     "status": {
+      "title": "Status",
+      "examples": [
+       "Delivered"
+      ]
+     }
+    },
+    "type": "object",
+    "title": "ReorderUpdate"
+   },
+   "ReportOut": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "format": {
+      "type": "string",
+      "title": "Format"
+     },
+     "generatedAt": {
+      "type": "string",
+      "title": "Generatedat"
+     },
+     "userId": {
+      "type": "string",
+      "title": "Userid"
+     },
+     "userName": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Username"
+     },
+     "roleId": {
+      "type": "integer",
+      "title": "Roleid"
+     },
+     "status": {
+      "type": "string",
+      "enum": [
+       "Processing",
+       "Completed",
+       "Failed"
+      ],
+      "title": "Status"
+     },
+     "filters": {
+      "anyOf": [
+       {
+        "additionalProperties": true,
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Filters"
+     },
+     "error": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Error"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "format",
+     "generatedAt",
+     "userId",
+     "userName",
+     "roleId",
+     "status",
+     "filters",
+     "error"
+    ],
+    "title": "ReportOut"
+   },
+   "ReportRequest": {
+    "properties": {
+     "name": {
+      "title": "Name",
+      "examples": [
+       "Sales Summary"
+      ]
+     },
+     "format": {
+      "title": "Format",
+      "examples": [
+       "PDF"
+      ]
+     },
+     "filters": {
+      "title": "Filters",
+      "examples": [
+       {
+        "end": "2025-06-18",
+        "region": [
+         "Central"
+        ],
+        "start": "2025-03-19"
+       }
+      ]
+     }
+    },
+    "type": "object",
+    "title": "ReportRequest"
+   },
+   "ReportTypeOut": {
+    "properties": {
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "description": {
+      "type": "string",
+      "title": "Description"
+     },
+     "icon": {
+      "type": "string",
+      "title": "Icon"
+     }
+    },
+    "type": "object",
+    "required": [
+     "name",
+     "description",
+     "icon"
+    ],
+    "title": "ReportTypeOut"
+   },
+   "RestoreOut": {
+    "properties": {
+     "permissions": {
+      "additionalProperties": {
+       "additionalProperties": {
+        "type": "string"
+       },
+       "type": "object"
+      },
+      "type": "object",
+      "title": "Permissions"
+     },
+     "screens": {
+      "additionalProperties": {
+       "items": {
+        "type": "string"
+       },
+       "type": "array"
+      },
+      "type": "object",
+      "title": "Screens"
+     }
+    },
+    "type": "object",
+    "required": [
+     "permissions",
+     "screens"
+    ],
+    "title": "RestoreOut"
+   },
+   "RoleOut": {
+    "properties": {
+     "roleId": {
+      "type": "integer",
+      "title": "Roleid"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "screens": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Screens"
+     }
+    },
+    "type": "object",
+    "required": [
+     "roleId",
+     "name",
+     "screens"
+    ],
+    "title": "RoleOut"
+   },
+   "SaleOut": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "date": {
+      "type": "string",
+      "title": "Date"
+     },
+     "sku": {
+      "type": "string",
+      "title": "Sku"
+     },
+     "category": {
+      "type": "string",
+      "title": "Category"
+     },
+     "location": {
+      "type": "string",
+      "title": "Location"
+     },
+     "region": {
+      "type": "string",
+      "title": "Region"
+     },
+     "channel": {
+      "type": "string",
+      "title": "Channel"
+     },
+     "units": {
+      "type": "integer",
+      "title": "Units"
+     },
+     "unitPrice": {
+      "type": "number",
+      "title": "Unitprice"
+     },
+     "discountRate": {
+      "type": "number",
+      "title": "Discountrate"
+     },
+     "netRevenue": {
+      "type": "number",
+      "title": "Netrevenue"
+     },
+     "datasetId": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Datasetid"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "date",
+     "sku",
+     "category",
+     "location",
+     "region",
+     "channel",
+     "units",
+     "unitPrice",
+     "discountRate",
+     "netRevenue",
+     "datasetId"
+    ],
+    "title": "SaleOut"
+   },
+   "ScreensUpdate": {
+    "properties": {
+     "screens": {
+      "title": "Screens",
+      "examples": [
+       [
+        "SCR-01",
+        "SCR-02",
+        "SCR-04"
+       ]
+      ]
+     }
+    },
+    "type": "object",
+    "title": "ScreensUpdate"
+   },
+   "SessionInfo": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "startedAt": {
+      "type": "string",
+      "title": "Startedat"
+     },
+     "expiresAt": {
+      "type": "string",
+      "title": "Expiresat"
+     },
+     "remember": {
+      "type": "boolean",
+      "title": "Remember"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "startedAt",
+     "expiresAt",
+     "remember"
+    ],
+    "title": "SessionInfo"
+   },
+   "SessionOut": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "userId": {
+      "type": "string",
+      "title": "Userid"
+     },
+     "loginAt": {
+      "type": "string",
+      "title": "Loginat"
+     },
+     "logoutAt": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Logoutat"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "userId",
+     "loginAt",
+     "logoutAt"
+    ],
+    "title": "SessionOut"
+   },
+   "SnapshotItem": {
+    "properties": {
+     "sku": {
+      "type": "string",
+      "title": "Sku"
+     },
+     "stock": {
+      "type": "integer",
+      "title": "Stock"
+     },
+     "status": {
+      "type": "string",
+      "title": "Status"
+     }
+    },
+    "type": "object",
+    "required": [
+     "sku",
+     "stock",
+     "status"
+    ],
+    "title": "SnapshotItem"
+   },
+   "SnapshotOut": {
+    "properties": {
+     "month": {
+      "type": "string",
+      "title": "Month"
+     },
+     "asOf": {
+      "type": "string",
+      "title": "Asof"
+     },
+     "items": {
+      "items": {
+       "$ref": "#/components/schemas/SnapshotItem"
+      },
+      "type": "array",
+      "title": "Items"
+     }
+    },
+    "type": "object",
+    "required": [
+     "month",
+     "asOf",
+     "items"
+    ],
+    "title": "SnapshotOut"
+   },
+   "StockUpdate": {
+    "properties": {
+     "stock": {
+      "title": "Stock",
+      "examples": [
+       1450
+      ]
+     },
+     "reason": {
+      "title": "Reason",
+      "examples": [
+       "Cycle count"
+      ]
+     },
+     "notes": {
+      "title": "Notes",
+      "default": "",
+      "examples": [
+       "Aisle 4 recount"
+      ]
+     }
+    },
+    "type": "object",
+    "title": "StockUpdate"
+   },
+   "SummaryOut": {
+    "properties": {
+     "roleId": {
+      "type": "integer",
+      "title": "Roleid"
+     },
+     "generatedAt": {
+      "type": "string",
+      "title": "Generatedat"
+     },
+     "startDate": {
+      "type": "string",
+      "title": "Startdate"
+     },
+     "endDate": {
+      "type": "string",
+      "title": "Enddate"
+     },
+     "kpis": {
+      "items": {
+       "$ref": "#/components/schemas/Kpi"
+      },
+      "type": "array",
+      "title": "Kpis"
+     }
+    },
+    "type": "object",
+    "required": [
+     "roleId",
+     "generatedAt",
+     "startDate",
+     "endDate",
+     "kpis"
+    ],
+    "title": "SummaryOut"
+   },
+   "UploadOut": {
+    "properties": {
+     "dataset": {
+      "$ref": "#/components/schemas/DatasetOut"
+     },
+     "validation": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Validation"
+     }
+    },
+    "type": "object",
+    "required": [
+     "dataset",
+     "validation"
+    ],
+    "title": "UploadOut"
+   },
+   "UserCreate": {
+    "properties": {
+     "name": {
+      "title": "Name",
+      "examples": [
+       "Sara Khalid"
+      ]
+     },
+     "department": {
+      "title": "Department",
+      "examples": [
+       "Commercial"
+      ]
+     },
+     "roleId": {
+      "title": "Roleid",
+      "examples": [
+       1
+      ]
+     },
+     "status": {
+      "title": "Status",
+      "default": "Active",
+      "examples": [
+       "Active"
+      ]
+     },
+     "password": {
+      "title": "Password",
+      "examples": [
+       "Welcome123!"
+      ]
+     },
+     "id": {
+      "title": "Id",
+      "description": "Optional employee ID (imports)"
+     },
+     "email": {
+      "title": "Email",
+      "description": "Optional work email (imports)"
+     }
+    },
+    "type": "object",
+    "title": "UserCreate"
+   },
+   "UserOut": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "email": {
+      "type": "string",
+      "title": "Email"
+     },
+     "roleId": {
+      "type": "integer",
+      "title": "Roleid"
+     },
+     "initials": {
+      "type": "string",
+      "title": "Initials"
+     },
+     "department": {
+      "type": "string",
+      "title": "Department"
+     },
+     "status": {
+      "type": "string",
+      "title": "Status"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "email",
+     "roleId",
+     "initials",
+     "department",
+     "status"
+    ],
+    "title": "UserOut"
+   },
+   "UserUpdate": {
+    "properties": {
+     "name": {
+      "title": "Name"
+     },
+     "email": {
+      "title": "Email"
+     },
+     "department": {
+      "title": "Department"
+     },
+     "roleId": {
+      "title": "Roleid"
+     },
+     "status": {
+      "title": "Status"
+     },
+     "password": {
+      "title": "Password"
+     }
+    },
+    "type": "object",
+    "title": "UserUpdate"
+   },
+   "ValidationError": {
+    "properties": {
+     "loc": {
+      "items": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "integer"
+        }
+       ]
+      },
+      "type": "array",
+      "title": "Location"
+     },
+     "msg": {
+      "type": "string",
+      "title": "Message"
+     },
+     "type": {
+      "type": "string",
+      "title": "Error Type"
+     },
+     "input": {
+      "title": "Input"
+     },
+     "ctx": {
+      "type": "object",
+      "title": "Context"
+     }
+    },
+    "type": "object",
+    "required": [
+     "loc",
+     "msg",
+     "type"
+    ],
+    "title": "ValidationError"
+   }
+  },
+  "securitySchemes": {
+   "bearerAuth": {
+    "type": "http",
+    "scheme": "bearer",
+    "description": "The accessToken from POST /api/auth/login"
+   }
+  }
+ },
+ "tags": [
+  {
+   "name": "Authentication",
+   "description": "Sign in with a role, the current user, sign out. Send `Authorization: Bearer <accessToken>` on every other request."
+  },
+  {
+   "name": "Dashboard",
+   "description": "KPI cards per role, calculated with the global filters."
+  },
+  {
+   "name": "Sales data",
+   "description": "Sales history, uploads of any layout (CSV, TSV, text, .xlsx) and cleaning."
+  },
+  {
+   "name": "Forecasting",
+   "description": "Moving Average, Linear Regression and ARIMA runs, comparison, lineage and model recommendation."
+  },
+  {
+   "name": "Inventory",
+   "description": "Stock positions, adjustments, alerts, month-end snapshots and reorders."
+  },
+  {
+   "name": "Catalog",
+   "description": "Product categories."
+  },
+  {
+   "name": "Administration",
+   "description": "Users, action permissions and screen access (Admin only)."
+  },
+  {
+   "name": "Reports & Exports",
+   "description": "Role-authorised reports as PDF, XLSX or CSV, generated in the background; email."
+  },
+  {
+   "name": "Logs",
+   "description": "Audit log, sessions and error log (Admin only)."
+  },
+  {
+   "name": "System",
+   "description": "Health check."
+  }
+ ]
+}
